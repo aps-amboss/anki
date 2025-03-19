@@ -106,8 +106,8 @@ T = TypeVar("T")
 
 
 class MainWebView(AnkiWebView):
-    def __init__(self, mw: AnkiQt) -> None:
-        AnkiWebView.__init__(self, kind=AnkiWebViewKind.MAIN)
+    def __init__(self, mw: AnkiQt, profile: QWebEngineProfile | None = None) -> None:
+        super().__init__(kind=AnkiWebViewKind.MAIN, profile=profile)
         self.mw = mw
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
         self.setMinimumWidth(400)
@@ -963,7 +963,8 @@ title="{}" {}>{}</button>""".format(
         tweb = self.toolbarWeb = TopWebView(self)
         self.toolbar = Toolbar(self, tweb)
         # main area
-        self.web = MainWebView(self)
+        self.main_web_profile = QWebEngineProfile("anki_main", parent=self)
+        self.web = MainWebView(self, profile=self.main_web_profile)
         # bottom area
         sweb = self.bottomWeb = BottomWebView(self)
         sweb.setFocusPolicy(Qt.FocusPolicy.WheelFocus)

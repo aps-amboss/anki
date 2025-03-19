@@ -36,8 +36,12 @@ BridgeCommandHandler = Callable[[str], Any]
 
 
 class AnkiWebPage(QWebEnginePage):
-    def __init__(self, onBridgeCmd: BridgeCommandHandler) -> None:
-        QWebEnginePage.__init__(self)
+    def __init__(
+        self,
+        onBridgeCmd: BridgeCommandHandler,
+        profile: QWebEngineProfile | None = None,
+    ) -> None:
+        super().__init__(profile)
         self._onBridgeCmd = onBridgeCmd
         self._setupBridge()
         self.open_links_externally = True
@@ -284,12 +288,13 @@ class AnkiWebView(QWebEngineView):
         parent: QWidget | None = None,
         title: str = "",  # used by add-ons; in Anki code use kind instead to set title
         kind: AnkiWebViewKind = AnkiWebViewKind.DEFAULT,
+        profile: QWebEngineProfile | None = None,
     ) -> None:
         QWebEngineView.__init__(self, parent=parent)
         self.set_kind(kind)
         if title:
             self.set_title(title)
-        self._page = AnkiWebPage(self._onBridgeCmd)
+        self._page = AnkiWebPage(self._onBridgeCmd, profile=profile)
         # reduce flicker
         self._page.setBackgroundColor(theme_manager.qcolor(colors.CANVAS))
 
